@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spring-boot-k8s-demo
+  name: spring-boot-k8s-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-boot-k8s-demo
+  template:
+    metadata:
+      labels:
+        app: spring-boot-k8s-demo
+    spec:
+      containers:
+      - image: pseudojo/spring-boot-dockerize-test:0.0.1
+        name: spring-boot-dockerize-test
+        volumeMounts:
+        - mountPath: /home/app/application.properties
+          subPath: application.properties
+          name: spring-boot-config
+      terminationGracePeriodSeconds: 5
+      volumes:
+      - configMap:
+          name: spring-boot-k8s-demo
+        name: spring-boot-config
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: spring-boot-k8s-demo
+  name: spring-boot-k8s-demo
+spec:
+  ports:
+  - name: 8080-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: spring-boot-k8s-demo
+  type: NodePort
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: spring-boot-k8s-demo
+data:
+  application.properties: |-
+    server.port=8080
+    
+    custom.myname=Gildong Hong
+    custom.myage=49
+    custom.mytel=01049498989
+    
+---
