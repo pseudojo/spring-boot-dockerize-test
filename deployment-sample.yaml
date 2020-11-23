@@ -17,6 +17,8 @@ spec:
       containers:
       - image: pseudojo/spring-boot-dockerize-test:0.0.1
         name: spring-boot-dockerize-test
+        ports:
+        - containerPort: 8080
         volumeMounts:
         - mountPath: /home/app/application.properties
           subPath: application.properties
@@ -40,7 +42,7 @@ metadata:
   name: spring-boot-k8s-demo
 spec:
   ports:
-  - name: 8080-8080
+  - name: boot-port
     port: 8080
     protocol: TCP
     targetPort: 8080
